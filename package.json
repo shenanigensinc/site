@@ -1,0 +1,9 @@
+{
+  "name": "drug-epidemic-manager",
+  "version": "1.0.0",
+  "description": "Simple browser game to manage drug epidemics",
+  "scripts": {
+    "test": "echo 'No tests defined'"
+  },
+  "license": "MIT"
+}
