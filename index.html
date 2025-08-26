@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drug Epidemic Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('https://images.unsplash.com/photo-1460574283810-2aab119d8511?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+    }
+    h1 { margin-top: 1rem; }
+    #budget { margin-bottom: 1rem; font-size: 1.2rem; }
+    #zones {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .zone {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 1rem;
+      border-radius: 8px;
+      width: 200px;
+    }
+    #actions { margin-top: 1.5rem; }
+    .action {
+      background: rgba(0, 0, 0, 0.6);
+      border: none;
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #fff;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background 0.3s;
+    }
+    .action:hover { background: rgba(255, 255, 255, 0.2); }
+    .action img {
+      width: 64px;
+      height: 64px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Drug Epidemic Manager</h1>
+  <div id="budget">Budget: <span id="budget-value"></span></div>
+  <div id="zones">
+    <div class="zone" data-index="0">
+      <h2>Downtown</h2>
+      <p>Prevalence: <span class="prevalence"></span>%</p>
+      <p>Harm: <span class="harm"></span></p>
+      <p>Mortality: <span class="mortality"></span></p>
+    </div>
+    <div class="zone" data-index="1">
+      <h2>Suburbs</h2>
+      <p>Prevalence: <span class="prevalence"></span>%</p>
+      <p>Harm: <span class="harm"></span></p>
+      <p>Mortality: <span class="mortality"></span></p>
+    </div>
+    <div class="zone" data-index="2">
+      <h2>Industrial</h2>
+      <p>Prevalence: <span class="prevalence"></span>%</p>
+      <p>Harm: <span class="harm"></span></p>
+      <p>Mortality: <span class="mortality"></span></p>
+    </div>
+  </div>
+  <div id="actions">
+    <button id="enforce" class="action">
+      <img src="https://cdn.jsdelivr.net/npm/openmoji@14.0.0/color/svg/1F46E.svg" alt="Law Enforcement" />
+      <span>Enforce</span>
+    </button>
+    <button id="treat" class="action">
+      <img src="https://cdn.jsdelivr.net/npm/openmoji@14.0.0/color/svg/2695.svg" alt="Treatment" />
+      <span>Treat</span>
+    </button>
+    <button id="legalize" class="action">
+      <img src="https://cdn.jsdelivr.net/npm/openmoji@14.0.0/color/svg/1F33F.svg" alt="Legalize Weed" />
+      <span>Legalize Weed</span>
+    </button>
+  </div>
+  <script>
+    const zones = [
+      { name: 'Downtown', prevalence: 30, harm: 20, mortality: 5 },
+      { name: 'Suburbs', prevalence: 15, harm: 10, mortality: 2 },
+      { name: 'Industrial', prevalence: 25, harm: 15, mortality: 3 }
+    ];
+    let budget = 10;
+
+    function render() {
+      document.getElementById('budget-value').textContent = budget;
+      document.querySelectorAll('.zone').forEach((el, idx) => {
+        const z = zones[idx];
+        el.querySelector('.prevalence').textContent = z.prevalence.toFixed(1);
+        el.querySelector('.harm').textContent = z.harm.toFixed(1);
+        el.querySelector('.mortality').textContent = z.mortality.toFixed(1);
+      });
+    }
+
+    function tick() {
+      zones.forEach(z => {
+        z.prevalence = Math.min(100, z.prevalence + Math.random() * 3);
+        z.harm = Math.min(100, z.harm + z.prevalence * 0.02);
+        z.mortality = Math.min(100, z.mortality + z.harm * 0.01);
+      });
+      render();
+    }
+
+    function apply(action) {
+      if (budget <= 0) return;
+      budget--;
+      zones.forEach(z => {
+        switch (action) {
+          case 'enforce':
+            z.prevalence = Math.max(0, z.prevalence - 5);
+            z.harm = Math.min(100, z.harm + 2);
+            break;
+          case 'treat':
+            z.harm = Math.max(0, z.harm - 5);
+            z.mortality = Math.max(0, z.mortality - 2);
+            break;
+          case 'legalize':
+            z.prevalence = Math.max(0, z.prevalence - 3);
+            break;
+        }
+      });
+      render();
+    }
+
+    document.getElementById('enforce').addEventListener('click', () => apply('enforce'));
+    document.getElementById('treat').addEventListener('click', () => apply('treat'));
+    document.getElementById('legalize').addEventListener('click', () => apply('legalize'));
+
+    setInterval(tick, 3000);
+    render();
+  </script>
+</body>
+</html>
